@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "SIPD Perencanaan Tools",
+  "description": "Chrome extension untuk mengoptimalkan aplikasi sipd.kemendagri.go.id",
+  "version": "1.0.0",
+  "icons": {
+    "16": "img/logo-small.png",
+    "48": "img/logo-small.png",
+    "128": "img/logo-small.png"
+  },
+  "background": {
+    "service_worker": "background-all.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://sipd.kemendagri.go.id/renstra/*",
+        "https://sipd.kemendagri.go.id/rpjmd/*",
+        "https://sipd.kemendagri.go.id/rpjpd/*"
+      ],
+      "css": [
+        "css/content.css",
+        "css/select2.min.css",
+        "css/sweetalert2.min.css"
+      ],
+      "js": [
+        "config.js",
+        "js/jquery.min.js",
+        "js/crypto-js.min.js",
+        "js/select2.min.js",
+        "js/sweetalert2.all.min.js",
+        "js/content/app.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "config.js",
+        "content-message.js",
+        "js/*",
+        "img/*",
+        "css/*"
+      ],
+      "matches": ["https://sipd.kemendagri.go.id/*"]
+    }
+  ],
+  "host_permissions": ["<all_urls>"],
+  "permissions": ["webRequest", "activeTab", "storage", "tabs"]
+}
