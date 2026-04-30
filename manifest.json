@@ -25,11 +25,13 @@
       ],
       "js": [
         "config.js",
+        "js/ky.min.js",
         "js/jquery.min.js",
         "js/crypto-js.min.js",
         "js/select2.min.js",
         "js/sweetalert2.all.min.js",
-        "js/content/app.js"
+        "js/content/app.js",
+        "js/content/renstra/renstra.js"
       ],
       "run_at": "document_end"
     }

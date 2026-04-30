@@ -1,0 +1,9 @@
+{
+  "typeAcquisition": {
+    "include": ["chrome", "jQuery"]
+  },
+  "compilerOptions": {
+    "checkJs": true
+  },
+  "include": ["js/sweetalert2.all.min.js"]
+}
