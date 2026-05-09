@@ -1,5 +1,5 @@
 const config = {
-  sipd_url: window.location.pathname, // URL SIPD-RI
+  sipd_url: "https://sipd.kemendagri.go.id/renstra/b07294fa39924f6a7331ab68efc159e8187d54c1/", // URL SIPD-RI
   url_server_lokal: "https://xxxxxxxx.com/wp-admin/admin-ajax.php", // URL Server WordPress WP-SIPD
   api_key: "xxxxxxxxxxxxxxxxxxxx", // informasi pengaktifan lisensi key ada di https://wpsipd.qodrbee.com/
 };
