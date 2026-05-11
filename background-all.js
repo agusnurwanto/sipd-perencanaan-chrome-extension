@@ -3,7 +3,7 @@ try {
     "/config.js",
     "js/background/bg-functions.js",
     "js/background/background.js",
-    "js/ky.min.js",
+    "js/background/ky.min.js",
   );
 } catch (event) {
   console.log(event);

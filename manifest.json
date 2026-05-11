@@ -31,7 +31,8 @@
         "js/select2.min.js",
         "js/sweetalert2.all.min.js",
         "js/content/app.js",
-        "js/content/renstra/renstra.js"
+        "js/content/content-scripts.js",
+        "js/content/renstra/final/renstra.js"
       ],
       "run_at": "document_end"
     }
