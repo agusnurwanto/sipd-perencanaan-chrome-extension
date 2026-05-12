@@ -25,7 +25,6 @@
       ],
       "js": [
         "config.js",
-        "js/ky.min.js",
         "js/jquery.min.js",
         "js/crypto-js.min.js",
         "js/select2.min.js",

@@ -13,7 +13,8 @@
 
     const actions = {
       getPerangkatDaerah: "select_perangkat_daerah",
-      getDataTable: "datatable",
+      getProgram: "datatable",
+      getKegiatan: "datatable_kegiatan",
     };
 
     const nama_paket = "m";
@@ -88,27 +89,26 @@
     async function getDaftarPerangkatDaerah(delay = 500) {
       console.log("Mendapatkan daftar perangkat daerah...");
       const url = `${BASE_URL}?${nama_paket}=${renstra.final.program}&${action}=${actions.getPerangkatDaerah}`;
-      const { results, total } = await relayAjax({
+      const { results: daftarPerangkatDaerah, total } = await relayAjax({
         url,
         type: "POST",
         data: {
           page: 1,
         },
       });
-      console.log(`daftar perangkat daerah halaman 1:`, results);
+      // const daftarPerangkatDaerah = [...results];
+      console.log(`daftar perangkat daerah halaman 1:`, daftarPerangkatDaerah);
 
-      let daftarPerangkatDaerah = [...results];
       const totalData = Number(total);
-      const dataLength = daftarPerangkatDaerah.length;
-      const totalPages = Math.ceil(totalData / dataLength);
+      const totalPages = Math.ceil(totalData / daftarPerangkatDaerah.length);
 
       if (totalPages > 1) {
-        const promiseData = [];
+        const promisesPagination = [];
 
         for (let page = 2; page <= totalPages; page++) {
           const newDelay = (page - 1) * delay;
 
-          promiseData.push(
+          promisesPagination.push(
             new Promise((resolve) => setTimeout(resolve, newDelay)).then(() => {
               return relayAjax({
                 url,
@@ -127,9 +127,9 @@
           );
         }
 
-        const promiseResponses = await Promise.all(promiseData);
+        const promiseResponses = await Promise.all(promisesPagination);
         for (const { results } of promiseResponses) {
-          daftarPerangkatDaerah = daftarPerangkatDaerah.concat(results);
+          daftarPerangkatDaerah.push(...results);
         }
       }
 
@@ -146,7 +146,7 @@
       paginasi = 10,
       delay = 500,
     ) {
-      const url = `${BASE_URL}?${nama_paket}=${renstra.final.program}&${action}=${actions.getDataTable}`;
+      const url = `${BASE_URL}?${nama_paket}=${renstra.final.program}&${action}=${actions.getProgram}`;
       const payload = (draw, start, paginasi, kodeskpd) => {
         return {
           draw,
@@ -203,7 +203,6 @@
           "search[value]": "",
           "search[regex]": false,
           kodeskpd,
-          // kodeskpd: "2.11.2.09.0.00.01.0000",
         };
       };
 
@@ -222,7 +221,7 @@
         const totalDraw = Math.ceil(totalData / dataLength);
 
         if (dataLength < totalData) {
-          const promiseData = [];
+          const promisesPagination = [];
 
           for (
             let draw = 2, start = paginasi;
@@ -231,7 +230,7 @@
           ) {
             const newDelay = (draw - 1) * delay;
 
-            promiseData.push(
+            promisesPagination.push(
               new Promise((resolve) => setTimeout(resolve, newDelay)).then(
                 () => {
                   return relayAjax({
@@ -250,14 +249,15 @@
             );
           }
 
-          const promiseResponses = await Promise.all(promiseData);
+          const promiseResponses = await Promise.all(promisesPagination);
           for (const { data } of promiseResponses) {
-            dataProgram = dataProgram.concat(data);
+            dataProgram.push(...data);
           }
         }
 
-        dataProgram = dataProgram.map((data) => ({
+        dataProgram = dataProgram.map(({ id, ...data }) => ({
           ...data,
+          idoutcome: id,
           kodeskpd,
           textskpd,
           uraiskpd,
@@ -279,12 +279,161 @@
         });
         // console.log("Data Program Renstra Final:", dataProgram);
       }
-      // return dataProgram;
+      return dataProgram;
+    }
+
+    async function backupKegiatanRenstraFinal(dataProgram, paginasi = 10) {
+      const url = `${BASE_URL}?${nama_paket}=${renstra.final.program}&${action}=${actions.getKegiatan}`;
+      const payload = (
+        draw,
+        start,
+        paginasi,
+        kodeskpd,
+        kodebidang,
+        kodeprogram,
+        idoutcome,
+      ) => {
+        return {
+          draw,
+          // draw: 1,
+          "columns[0][data]": "no",
+          "columns[0][name]": "",
+          "columns[0][searchable]": false,
+          "columns[0][orderable]": false,
+          "columns[0][search][value]": "",
+          "columns[0][search][regex]": false,
+          "columns[1][data]": "uraikegiatan",
+          "columns[1][name]": "uraikegiatan",
+          "columns[1][searchable]": true,
+          "columns[1][orderable]": true,
+          "columns[1][search][value]": "",
+          "columns[1][search][regex]": false,
+          "columns[2][data]": "pagu1",
+          "columns[2][name]": "pagu1",
+          "columns[2][searchable]": false,
+          "columns[2][orderable]": false,
+          "columns[2][search][value]": "",
+          "columns[2][search][regex]": false,
+          "columns[3][data]": "pagu2",
+          "columns[3][name]": "pagu2",
+          "columns[3][searchable]": false,
+          "columns[3][orderable]": false,
+          "columns[3][search][value]": "",
+          "columns[3][search][regex]": false,
+          "columns[4][data]": "pagu3",
+          "columns[4][name]": "pagu3",
+          "columns[4][searchable]": false,
+          "columns[4][orderable]": false,
+          "columns[4][search][value]": "",
+          "columns[4][search][regex]": false,
+          "columns[5][data]": "pagu4",
+          "columns[5][name]": "pagu4",
+          "columns[5][searchable]": false,
+          "columns[5][orderable]": false,
+          "columns[5][search][value]": "",
+          "columns[5][search][regex]": false,
+          "columns[6][data]": "pagu5",
+          "columns[6][name]": "pagu5",
+          "columns[6][searchable]": false,
+          "columns[6][orderable]": false,
+          "columns[6][search][value]": "",
+          "columns[6][search][regex]": false,
+          "columns[7][data]": "",
+          "columns[7][name]": "",
+          "columns[7][searchable]": false,
+          "columns[7][orderable]": false,
+          "columns[7][search][value]": "",
+          "columns[7][search][regex]": false,
+          start,
+          // start: 0,
+          length: paginasi,
+          // length: 10,
+          "search[value]": "",
+          "search[regex]": false,
+          kodeskpd,
+          // kodeskpd: "1.01.2.19.0.00.03.0000",
+          kodebidang,
+          // kodebidang: "1.01",
+          kodeprogram,
+          // kodeprogram: "1.01.01",
+          idoutcome,
+          // idoutcome: "98c68044-6638-11f0-aadc-622aabdf4862",
+        };
+      };
+
+      for (const {
+        kodeskpd,
+        kodebidang,
+        kodeprogram,
+        idoutcome,
+      } of dataProgram) {
+        const { data, recordsTotal } = await relayAjax({
+          url,
+          type: "POST",
+          data: payload(
+            1,
+            0,
+            paginasi,
+            kodeskpd,
+            kodebidang,
+            kodeprogram,
+            idoutcome,
+          ),
+        });
+        let dataKegiatan = [...data];
+        console.log(`data kegiatan renstra final paginasi 1:`, data);
+
+        const totalData = Number(recordsTotal);
+        const dataLength = dataKegiatan.length;
+        const totalDraw = Math.ceil(totalData / dataLength);
+
+        if (dataLength < totalData) {
+          const promisesPagination = [];
+
+          for (
+            let draw = 2, start = paginasi;
+            draw <= totalDraw;
+            draw++, start += paginasi
+          ) {
+            const newDelay = (draw - 1) * delay;
+
+            promisesPagination.push(
+              new Promise((resolve) => setTimeout(resolve, newDelay)).then(
+                () => {
+                  return relayAjax({
+                    url,
+                    type: "POST",
+                    data: payload(
+                      draw,
+                      start,
+                      paginasi,
+                      kodeskpd,
+                      kodebidang,
+                      kodeprogram,
+                      idoutcome,
+                    ),
+                  });
+                },
+              ),
+            );
+          }
+
+          const promiseResponses = await Promise.all(promisesPagination);
+          for (const { data } of promiseResponses) {
+            dataKegiatan.push(...data);
+          }
+        }
+
+        console.log(dataKegiatan);
+      }
     }
 
     async function backupRenstraFinal() {
       const daftarPerangkatDaerah = await getDaftarPerangkatDaerah();
-      await backupProgramRenstraFinal(daftarPerangkatDaerah);
+      console.log("test:", daftarPerangkatDaerah);
+      // backupIndikatorProgramRenstraFinal(daftarPerangkatDaerah);
+      // await backupProgramRenstraFinal(daftarPerangkatDaerah);
+      // backupKegiatanRenstraFinal();
     }
 
     if (window.location.search.includes(renstra.final.program)) {
